@@ -74,6 +74,34 @@ def get_crendentials_from_callback(request, client_json_filepath, scopes, redire
 
     return credentials
 
+def get_crendentials_from_popup(request, client_json_filepath, scopes, redirect_uri):
+    """Get credentials object from the popup request after a successful login.
+
+    Args:
+        request (Request): The django view request argument.
+        client_json_filepath (str): Path where your client_id.json file is located.
+        scopes (list(str)): Authorization scopes required.
+        redirect_uri (str): The url where the google oauth should redirect after a successful login.
+
+    Raises:
+        InvalidLoginException: If an unauthenticated request is made to the redirect uri.
+
+    Returns:
+        Credentials: The credentials object which can be used to authenticate google APIs.
+    """
+
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        client_json_filepath,
+        scopes=scopes,
+    )
+    flow.redirect_uri = redirect_uri
+
+    authorization_response = request.build_absolute_uri()
+    flow.fetch_token(authorization_response=authorization_response)
+    credentials = flow.credentials
+
+    return credentials
+
 def stringify_credentials(credentials):
     """Convert the credentials object to a string. So that it can be stored easily.
 
