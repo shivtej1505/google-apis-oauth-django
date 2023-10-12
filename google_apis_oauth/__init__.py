@@ -74,7 +74,7 @@ def get_crendentials_from_callback(request, client_json_filepath, scopes, redire
 
     return credentials
 
-def get_crendentials_from_popup(request, client_json_filepath, scopes, redirect_uri):
+def get_crendentials_from_popup(request, client_json_filepath, scopes):
     """Get credentials object from the popup request after a successful login.
 
     Args:
@@ -94,6 +94,7 @@ def get_crendentials_from_popup(request, client_json_filepath, scopes, redirect_
         client_json_filepath,
         scopes=scopes,
     )
+    flow.redirect_uri = "postmessage"
 
     authorization_response = request.build_absolute_uri()
     flow.fetch_token(authorization_response=authorization_response)
